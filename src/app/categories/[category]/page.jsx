@@ -6,7 +6,7 @@ import { CourseFilter } from '../../../components/layout/CourseFilter'
 function Hero({params}) {
   return <section className="bg-gradient-to-r from-gray-800 to-gray-700 py-20">
     <div className="container mx-auto px-6 text-center">
-      <h2 className="text-4xl font-bold mb-4">{params.category || "Web Development"}</h2>
+      <h2 className="text-4xl font-bold mb-4">{params.category?.replace(/%20/g, ' ') || "Web Development"}</h2>
       <p className="text-gray-400 text-lg">Master full-stack development with modern frameworks and tools</p>
     </div>
   </section>

@@ -1,6 +1,10 @@
+'use client'
+
 import React from 'react'
 import NavBar from '@/components/layout/NavBar';
 import { Footer } from '@/components/layout/Footer';
+import { getRequest } from '@/components/helpers/apiRequests';
+import Link from 'next/link';
 function Hero(){
     return (
         <section className="bg-gradient-to-r from-gray-800 to-gray-700 py-20">
@@ -21,29 +25,43 @@ function Hero(){
 
 function CategoryCard({ categoryTitle, categoryDescription, courseCounts }) {
     return (
-        <div className="bg-gray-800 rounded-xl p-6 hover:transform hover:scale-101 transition-all group">
-            <div className="relative mb-4">
-                <div className="bg-gray-700 h-48 rounded-lg"></div>
-                <span className="absolute bottom-2 right-2 bg-purple-600 text-sm px-3 py-1 rounded-full">
-                    {courseCounts && `${courseCounts} Courses`}
-                </span>
+        <Link href={`/categories/${categoryTitle}`}>
+            <div className="bg-gray-800 rounded-xl p-6 hover:transform hover:scale-101 transition-all group cursor-pointer">
+                <div className="relative mb-4">
+                    <div className="bg-gray-700 h-48 rounded-lg"></div>
+                    <span className="absolute bottom-2 right-2 bg-purple-600 text-sm px-3 py-1 rounded-full">
+                        {courseCounts && `${courseCounts} Courses`}
+                    </span>
+                </div>
+                <h3 className="text-xl font-bold mb-2 group-hover:text-purple-400 transition-colors">
+                    {categoryTitle}
+                </h3>
+                <p className="text-gray-400 mb-4">{categoryDescription}</p>
+                <button className="text-purple-400 hover:text-purple-300 flex items-center">
+                    Explore Path
+                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
             </div>
-            <h3 className="text-xl font-bold mb-2 group-hover:text-purple-400 transition-colors">
-                {categoryTitle}
-            </h3>
-            <p className="text-gray-400 mb-4">{categoryDescription}</p>
-            <button className="text-purple-400 hover:text-purple-300 flex items-center">
-                Explore Path
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </button>
-        </div>
+        </Link>
     );  
 }
 
 
 export default function page() {
+    const [categories, setCategories] = React.useState([]);
+
+    React.useEffect(() => {
+        async function fetchCategories() {
+            const response = await getRequest('/api/categories');
+            console.log(response)
+            setCategories(response.data);
+        }
+
+        fetchCategories();
+    },[]);
+
   return (
     <main className="bg-gray-900 text-gray-100">
     {/* <!-- Navigation (Same as previous) --> */}
@@ -57,6 +75,8 @@ export default function page() {
             <div className="container mx-auto px-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {/* <!-- Category Card --> */}
+
+
                     <CategoryCard 
                         categoryTitle="Web Development" 
                         categoryDescription="Master full-stack development with modern frameworks and tools" 
@@ -77,6 +97,16 @@ export default function page() {
                         categoryDescription="Protect systems and networks from digital attacks" 
                         courseCounts={32} 
                     />
+
+
+                    {categories.map((category) => (
+                        <CategoryCard
+                            key={category._id}
+                            categoryTitle={category.title}
+                            categoryDescription={category.description}
+                            courseCounts={category.count}
+                        />
+                    ))}
                 </div>
             </div>
         </section>

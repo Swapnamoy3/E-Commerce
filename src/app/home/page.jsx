@@ -20,7 +20,6 @@ function Hero(){
             </div>
         </section>
     );
- 
 }
 
 function CourseCard(){
